@@ -82,6 +82,7 @@ class Fieldset(LayoutNode):
 
     def __init__(self, label, *elements, **kwargs):
         self.label = label
+        self.fieldset = kwargs.pop('fieldset', None)
         self.elements = _convert_to_field(elements)
         self.span_columns = kwargs.pop('span_columns', 1)
 

@@ -2,7 +2,7 @@ import os
 from collections import defaultdict
 
 from django.forms.forms import BoundField
-from django.template import Library
+from django.template import Library, RequestContext
 from django.template.base import (
     TemplateSyntaxError, Node, Variable, token_kwargs)
 from django.template.loader import get_template
@@ -98,7 +98,14 @@ class FormNode(Node):
                 children = (node for node in included.nodelist if isinstance(node, FormPartNode))
                 _render_parts(context, children)
 
-            return template.render(context.flatten())
+            flat = {}
+            # workaround for problem with actions
+            for d in context.dicts:
+                if isinstance(d, RequestContext):
+                    flat.update(d.flatten())
+                else:
+                    flat.update(d)
+            return template.render(flat)
 
 
 @register.tag('part')

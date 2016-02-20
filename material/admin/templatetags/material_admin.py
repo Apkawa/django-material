@@ -2,6 +2,8 @@ import datetime
 from importlib import import_module
 
 from django.apps import apps
+from django.contrib import admin
+from django.contrib.admin.options import InlineModelAdmin
 from django.contrib.admin.views.main import PAGE_VAR
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.conf import settings
@@ -16,7 +18,7 @@ from django.template import Library
 
 from material import Layout, Fieldset, Row
 from material.compat import simple_tag
-from ..base import AdminReadonlyField, TabularInline
+from ..base import AdminReadonlyField, TabularInline, StackedInline
 
 
 register = Library()
@@ -95,8 +97,13 @@ def get_app_list(request):
 
 
 @register.assignment_tag
-def fieldset_layout(adminform, inline_admin_formsets):
-    layout = getattr(adminform.model_admin, 'layout', None)
+def fieldset_layout(adminform, inline_admin_formsets=None):
+    model_admin = getattr(adminform, 'opts', None)
+    if not isinstance(model_admin, InlineModelAdmin):
+        model_admin = adminform.model_admin
+
+    layout = getattr(model_admin, 'layout', None)
+
     if layout is not None:
         for element in layout.elements:
             # TODO Ugly hack to substitute inline classes to instances
@@ -115,7 +122,6 @@ def fieldset_layout(adminform, inline_admin_formsets):
             line_fields = []
 
             for fieldset_field in line:
-                field = None
 
                 if getattr(fieldset_field, 'is_readonly', False):
                     field = AdminReadonlyField(fieldset_field)
@@ -130,12 +136,15 @@ def fieldset_layout(adminform, inline_admin_formsets):
                 fields.append(Row(*line_fields))
 
         if fieldset.name:
-            sets.append(Fieldset(fieldset.name, *fields))
+            sets.append(Fieldset(fieldset.name, *fields, fieldset=fieldset))
         else:
             sets += fields
 
-    for inline in inline_admin_formsets:
-        sets.append(TabularInline(inline))
+    for inline in inline_admin_formsets or []:
+        if isinstance(inline.opts, admin.TabularInline):
+            sets.append(TabularInline(inline))
+        else:
+            sets.append(StackedInline(inline))
 
     return Layout(*sets)
 

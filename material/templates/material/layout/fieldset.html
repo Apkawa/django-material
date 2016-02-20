@@ -1,7 +1,15 @@
 {% load material_form_internal %}
-<div class="section row">
-    <div class="col s12">
-        <h5>{{ parent.label|default:"" }}</h5>
-        {% for element in parent.elements %}{% render element %}{% endrender %}{% endfor %}
+<div class="section row {{ parent.fieldset.prefix|default:"" }}"
+     data-formset-prefix="{{ parent.fieldset.prefix|default:"" }}">
+    <div class="row header waves-effect white waves-light lighten-5 btn btn-flat {{ parent.fieldset.classes|default:"" }}">
+        <div class="col s12">
+            <h5>{{ parent.label|default:"" }}</h5>
+        </div>
+    </div>
+    <div class="row content">
+        <div class="col s12">
+            {% for element in parent.elements %}{% render element %}{% endrender %}{% endfor %}
+        </div>
+
     </div>
 </div>

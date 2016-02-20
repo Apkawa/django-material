@@ -493,3 +493,18 @@ ul.side-nav.module-menu li.active>a>span.badge {
         transform: rotate(90deg);
     }
 }
+
+/*Collapse*/
+.section .header {
+    padding:0px 10px;
+    font-size:0.7rem;
+    height:calc(100% - 15px);
+    width: 100%;
+
+}
+.collapse {
+}
+
+.collapse ~ .content {
+    display: none;
+}

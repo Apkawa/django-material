@@ -1,4 +1,4 @@
-from ..base import LayoutNode
+from ..base import LayoutNode, _convert_to_field, Fieldset
 
 
 class AdminReadonlyField(LayoutNode):
@@ -17,3 +17,12 @@ class TabularInline(LayoutNode):
     def __init__(self, inline, **kwargs):
         self.inline = inline
         self.span_columns = kwargs.pop('span_columns', 1)
+
+class StackedInline(LayoutNode):
+    template_name = 'inlines/stacked.html'
+
+    def __init__(self, inline, **kwargs):
+        self.inline = inline
+        self.span_columns = kwargs.pop('span_columns', 1)
+
+

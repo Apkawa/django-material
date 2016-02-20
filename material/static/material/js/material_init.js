@@ -2,33 +2,46 @@ if (navigator.appVersion.indexOf('Win') != -1) {
     document.write('<link rel="stylesheet" type="text/css" href="{% static "material/css/robotofix.css" %}">');
 }
 
-$(document).on('ready pjax:complete', function() {
+
+$(document).on('ready pjax:complete', function () {
     $('.dropdown-button').dropdown({hover: false, constrain_width: false});
     $('.button-collapse').sideNav();
     $('select').not('.disabled').not('.material-ignore').material_select();
 
-    $('[data-form-control="date"]').each(function() {
+    $('[data-form-control="date"]').each(function () {
         var input = $(this);
-        input.datetimepicker({format: input.data('date-format'), timepicker:false, mask:false, scrollInput:false});
+        input.datetimepicker({format: input.data('date-format'), timepicker: false, mask: false, scrollInput: false});
     });
-    $('[data-form-control="time"]').each(function() {
+    $('[data-form-control="time"]').each(function () {
         var input = $(this);
-        input.datetimepicker({format: input.data('date-format'), datepicker: false, timepicker:true, mask:false, scrollInput:false});
+        input.datetimepicker({
+            format: input.data('date-format'),
+            datepicker: false,
+            timepicker: true,
+            mask: false,
+            scrollInput: false
+        });
     });
-    $('[data-form-control="datetime"]').each(function() {
+    $('[data-form-control="datetime"]').each(function () {
         var input = $(this);
-        input.datetimepicker({format: input.data('date-format'), datepicker: true, timepicker:true, mask:false, scrollInput:false});
+        input.datetimepicker({
+            format: input.data('date-format'),
+            datepicker: true,
+            timepicker: true,
+            mask: false,
+            scrollInput: false
+        });
     });
     $('.formset-field').formset({
         animateForms: true
     });
 
     /*
-      In chrome, there is no way to get to know is autofill
-      fills the password field until user is interacted. Assume
-      that it is
-    */
-    if($('input[type=password]').length) {
+     In chrome, there is no way to get to know is autofill
+     fills the password field until user is interacted. Assume
+     that it is
+     */
+    if ($('input[type=password]').length) {
         function autofix() {
             $('input[type=password]').addClass('active');
             $('input[type=password]').next('label').addClass('active');
@@ -46,4 +59,21 @@ $(document).on('ready pjax:complete', function() {
         $('body').on('input propertychange', 'input[type=email]', autofix);
         $('body,html').bind('scroll mousedown DOMMouseScroll mousewheel keyup', userInteracted);
     }
+
+    $('body').on('click', '.collapse', function () {
+        var $header = $(this);
+
+        //getting the next element
+        var $content = $header.next();
+        //open up the content needed - toggle the slide- if visible, slide up, if not slidedown.
+        $content.slideToggle(500, function () {
+            //execute this after slideToggle is done
+            //change text of header based on visibility of content div
+            //$header.text(function () {
+            //    //change text based on condition
+            //});
+        });
+
+
+    });
 });
