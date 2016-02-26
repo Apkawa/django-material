@@ -4,10 +4,10 @@ from collections import defaultdict
 from django.forms.forms import BoundField
 from django.template import Library, RequestContext
 from django.template.base import (
-    TemplateSyntaxError, Node, Variable, token_kwargs)
+    TemplateSyntaxError, Node, Variable, token_kwargs
+)
 from django.template.loader import get_template
 from django.template.loader_tags import IncludeNode
-
 
 register = Library()
 
@@ -164,3 +164,27 @@ class FormPartNode(Node):
             if not value:
                 return ''
             return value
+
+
+@register.simple_tag('render_form', takes_context=True)
+def render_form(context, form, template_name='material/form.html', layout=None):
+    if form is None:
+        return ''
+
+    # Take one of view.layout or form.layout
+    if layout is None:
+        if 'view' in context:
+            view = context['view']
+            if hasattr(view, 'layout'):
+                layout = view.layout
+
+    if layout is None:
+        if hasattr(form, 'layout'):
+            layout = form.layout
+
+    template = get_template(template_name)
+
+    # Render form and parts
+    parts = defaultdict(dict)  # part -> section -> value
+
+    return template.render(flat)
